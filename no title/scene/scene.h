@@ -56,30 +56,35 @@ private:
 
 	int world_num;
 
-	StageStatus worldstatus[1][3];
+	StageStatus world_status[3];
 
 	struct World
 	{
-		Vec2f pos;
+		Vec2i pos;
 		int size;
 	};
 	World world;
 
 	struct Cursol
 	{
-		Vec2f pos;
+		Vec2i pos;
 		int size;
 	};
 	Cursol cursol;
 	
+	void MoveCursol();
+
 public:
 
 	WorldSelect();
 
+	void SetWorldClear(StageStatus);
+	int GetWorldNum();
+
 	void UpDate();
-	int GetterWorld();
 	void Draw();
 	SceneName Shift();
+
 };
 
 
@@ -94,28 +99,36 @@ private:
 
 	int world_num;
 	int stage_num;
-	StageStatus stagestatus[2][5];
+	StageStatus stage_status[3][10];
 
+	//マップアイコン
 	struct Stage
 	{
-		Vec2f pos;
+		Vec2i pos;
 		int size;
 	};
 	Stage stage;
 
+	//カーソル
 	struct Cursol
 	{
-		Vec2f pos;
+		Vec2i pos;
 		int size;
 	};
 	Cursol cursol;
+
+	void MoveCursol();
 
 public:
 
 	StageSelect();
 
+	void SetWorldNum(int);
+	void StageClear(StageStatus);
+	int GetStageNum();
+	StageStatus IsWorldClear();
+
 	void UpDate();
-	int GetterStage();
 	void Draw();
 	SceneName Shift();
 
@@ -133,6 +146,12 @@ private:
 	int stage_num;
 
 public:
+
+	GameMain();
+
+	void SetWorldNum(int);
+	void SetStageNum(int);
+	StageStatus GetStageStatus();
 
 	void UpDate();
 	void Draw();

@@ -55,17 +55,33 @@ void SceneManager::Shift()
 
 	case WORLDSELECT:
 		if (env.isPushKey(GLFW_KEY_ENTER) || env.isPushKey(GLFW_KEY_SPACE))
+		{
 			scene_num = worldselect.Shift();
+
+			stageselect.SetWorldNum(worldselect.GetWorldNum());
+		}
+			
 		break;
 
 	case SceneName::STAGESELECT:
 		if (env.isPushKey(GLFW_KEY_ENTER) || env.isPushKey(GLFW_KEY_SPACE))
+		{
 			scene_num = stageselect.Shift();
+
+			gamemain.SetWorldNum(worldselect.GetWorldNum());
+			gamemain.SetStageNum(stageselect.GetStageNum());
+
+			worldselect.SetWorldClear(stageselect.IsWorldClear());
+		}
 		break;
 
 	case SceneName::GAMEMAIN:
 		if (env.isPushKey(GLFW_KEY_ENTER))
+		{
 			scene_num = gamemain.Shift();
+
+			stageselect.StageClear(gamemain.GetStageStatus());
+		}
 		break;
 	}
 }

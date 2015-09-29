@@ -1,5 +1,6 @@
 #include "scene.h"
 
+//***************************************************************
 //タイトル
 
 //private
@@ -8,8 +9,8 @@
 float Title::ChangeAlpha()
 {
 	alpha_count += 25.0f;
-	
-	return ( (std::sin(alpha_count) + 1.0f) * 0.9f );
+
+	return ((std::sin(alpha_count) + 1.0f) * 0.9f);
 }
 
 //public
@@ -47,9 +48,33 @@ SceneName Title::Shift()
 }
 
 
+//***************************************************************
 //ワールドセレクト
 
 //private
+void WorldSelect::MoveCursol()
+{
+	if (world_num > -1 && world_num < 2)
+	{
+		if (env.isPushKey(GLFW_KEY_RIGHT))
+		{
+			world.pos.x() -= 550;
+
+			world_num++;
+		}
+	}
+
+	if (world_num > 0 && world_num < 3)
+	{
+		if (env.isPushKey(GLFW_KEY_LEFT))
+		{
+			world.pos.x() += 550;
+
+			world_num--;
+		}
+	}
+
+}
 
 
 //public
@@ -59,28 +84,33 @@ WorldSelect::WorldSelect()
 {
 	world_image = Texture("res/image/world.png");
 
-	world_num = 1;
+	world_num = 0;
 
 	for (int i = 0; i < 3; i++)
 	{
-		worldstatus[0][i] = StageStatus::UNCLEAR;
+		world_status[i] = StageStatus::UNCLEAR;
 	}
 
-	world.pos = Vec2f(-200, -250);
+	world.pos = Vec2i(-200, -250);
 	world.size = 400;
 
-	cursol.pos = Vec2f(-200, -250);
+	cursol.pos = Vec2i(-200, -250);
 	cursol.size = 400;
+}
+
+void WorldSelect::SetWorldClear(StageStatus status)
+{
+	world_status[world_num] = status;
+}
+
+int WorldSelect::GetWorldNum()
+{
+	return world_num;
 }
 
 void WorldSelect::UpDate()
 {
-
-}
-
-int WorldSelect::GetterWorld()
-{
-	return world_num;
+	MoveCursol();
 }
 
 void WorldSelect::Draw()
@@ -94,7 +124,7 @@ void WorldSelect::Draw()
 	//ワールドアイコン
 	for (int i = 0; i < 3; i++)
 	{
-		switch (worldstatus[0][i])
+		switch (world_status[i])
 		{
 		case StageStatus::UNCLEAR:
 			drawFillBox(world.pos.x() + 550 * i, world.pos.y(), world.size, world.size, Color::yellow);
@@ -116,15 +146,84 @@ SceneName WorldSelect::Shift()
 	if (env.isPushKey(GLFW_KEY_SPACE))
 		return TITLE;
 	if (env.isPushKey(GLFW_KEY_ENTER))
+	{
+		GetWorldNum();
+
 		return STAGESELECT;
+	}
 
 	return WORLDSELECT;
 }
 
 
+//***************************************************************
 //ステージセレクト
 
 //private
+void StageSelect::MoveCursol()
+{
+	//左移動
+	if (stage_num > -1 && stage_num < 9)
+	{
+		if (env.isPushKey(GLFW_KEY_RIGHT))
+		{
+			if (stage_num != 4)
+			{
+				cursol.pos.x() += 250;
+
+				stage_num++;
+			}
+			else
+			{
+				cursol.pos = Vec2i(-600, -300);
+
+				stage_num++;
+			}
+		}
+	}
+
+	//右移動
+	if (stage_num > 0 && stage_num < 10)
+	{
+		if (env.isPushKey(GLFW_KEY_LEFT))
+		{
+			if (stage_num != 5)
+			{
+				cursol.pos.x() -= 250;
+
+				stage_num--;
+			}
+			else
+			{
+				cursol.pos = Vec2i(400, -50);
+
+				stage_num--;
+			}
+		}
+	}
+
+	//下移動
+	if (stage_num > -1 && stage_num < 5)
+	{
+		if (env.isPushKey(GLFW_KEY_DOWN))
+		{
+			cursol.pos.y() -= 250;
+
+			stage_num += 5;
+		}
+	}
+
+	//上移動
+	if (stage_num > 4 && stage_num < 10)
+	{
+		if (env.isPushKey(GLFW_KEY_UP))
+		{
+			cursol.pos.y() += 250;
+
+			stage_num -= 5;
+		}
+	}
+}
 
 
 //public
@@ -133,33 +232,51 @@ SceneName WorldSelect::Shift()
 StageSelect::StageSelect()
 {
 	world_image = Texture("res/image/world1.png");
-	
-	world_num = 1;
-	stage_num = 1;
 
-	for (int i = 0; i < 2; i++)
+	world_num = 0;
+	stage_num = 0;
+
+	for (int i = 0; i < 3; i++)
 	{
-		for (int k = 0; k < 5; k++)
+		for (int k = 0; k < 10; k++)
 		{
-			stagestatus[i][k] = StageStatus::UNCLEAR;
+			stage_status[i][k] = StageStatus::UNCLEAR;
 		}
 	}
 
-	stage.pos = Vec2f(-600, -50);
+	stage.pos = Vec2i(-600, -50);
 	stage.size = 200;
 
-	cursol.pos = Vec2f(-600, -50);
+	cursol.pos = Vec2i(-600, -50);
 	cursol.size = 200;
+}
+
+void StageSelect::SetWorldNum(int num)
+{
+	world_num = num;
+}
+
+void StageSelect::StageClear(StageStatus status)
+{
+	stage_status[world_num][stage_num] = status;
+}
+
+int StageSelect::GetStageNum()
+{
+	return stage_num;
+}
+
+StageStatus StageSelect::IsWorldClear()
+{
+	if (stage_status[world_num][9] == StageStatus::CLEAR)
+		return StageStatus::CLEAR;
+	else
+		return StageStatus::UNCLEAR;
 }
 
 void StageSelect::UpDate()
 {
-
-}
-
-int StageSelect::GetterStage()
-{
-	return stage_num;
+	MoveCursol();
 }
 
 void StageSelect::Draw()
@@ -171,21 +288,17 @@ void StageSelect::Draw()
 	drawTextureBox(-250, 300, 500, 150, 0, 0, 256, 64, world_image);
 
 	//ステージアイコン
-	for (int i = 0; i < 2; i++)
+	for (int k = 0; k < 10; k++)
 	{
-		for (int k = 0; k < 5; k++)
+		switch (stage_status[world_num][k])
 		{
-			switch (stagestatus[i][k])
-			{
-			case StageStatus:: UNCLEAR:
-				drawFillBox(stage.pos.x() + 250 * k, stage.pos.y() - 250 * i, stage.size, stage.size, Color::yellow);
-	
-				break;
+		case StageStatus::UNCLEAR:
+			drawFillBox(stage.pos.x() + 250 * (k % 5), stage.pos.y() - 250 * (k / 5 % 10), stage.size, stage.size, Color::yellow);
+			break;
 
-			case StageStatus::CLEAR:
-				drawFillBox(stage.pos.x() + 250 * k, stage.pos.y() - 250 * i, stage.size, stage.size, Color::cyan);
-				break;
-			}
+		case StageStatus::CLEAR:
+			drawFillBox(stage.pos.x() + 250 * (k % 5), stage.pos.y() - 250 * (k / 5 % 10), stage.size, stage.size, Color::cyan);
+			break;
 		}
 	}
 
@@ -204,12 +317,34 @@ SceneName StageSelect::Shift()
 }
 
 
+//***************************************************************
 //ゲームメイン
 
 //private
 
 
 //public
+
+//コンストラクタ
+GameMain::GameMain()
+{
+
+}
+
+void GameMain::SetWorldNum(int num)
+{
+	world_num = num;
+}
+
+void GameMain::SetStageNum(int num)
+{
+	stage_num = num;
+}
+
+StageStatus GameMain::GetStageStatus()
+{
+	return StageStatus::CLEAR;
+}
 
 void GameMain::UpDate()
 {

@@ -16,7 +16,6 @@ int main()
 
 	while (env.isOpen())
 	{
-
 		scenemanager.UpDate();
 
 		scenemanager.Shift();
