@@ -16,7 +16,7 @@ void SceneManager::UpDate()
 		stageselect.UpDate();
 		break;
 
-	case SceneName::GAMEMAIN:
+	case SceneName::GAMEMANAGER:
 		gamemain.UpDate();
 		break;
 	}
@@ -38,7 +38,7 @@ void SceneManager::Draw()
 		stageselect.Draw();
 		break;
 
-	case SceneName::GAMEMAIN:
+	case SceneName::GAMEMANAGER:
 		gamemain.Draw();
 		break;
 	}
@@ -49,12 +49,15 @@ void SceneManager::Shift()
 	switch (scene_num)
 	{
 	case SceneName::TITLE:
-		if (env.isPushKey(GLFW_KEY_ENTER))
+		if (Pad::Get().isPushButton(2))
 			scene_num = title.Shift();
+
+		if (Pad::Get().isPushButton(9))
+			exit(0);
 		break;
 
 	case WORLDSELECT:
-		if (env.isPushKey(GLFW_KEY_ENTER) || env.isPushKey(GLFW_KEY_SPACE))
+		if (Pad::Get().isPushButton(2) || Pad::Get().isPushButton(1))
 		{
 			scene_num = worldselect.Shift();
 
@@ -64,7 +67,7 @@ void SceneManager::Shift()
 		break;
 
 	case SceneName::STAGESELECT:
-		if (env.isPushKey(GLFW_KEY_ENTER) || env.isPushKey(GLFW_KEY_SPACE))
+		if (Pad::Get().isPushButton(2) || Pad::Get().isPushButton(1))
 		{
 			scene_num = stageselect.Shift();
 
@@ -75,8 +78,8 @@ void SceneManager::Shift()
 		}
 		break;
 
-	case SceneName::GAMEMAIN:
-		if (env.isPushKey(GLFW_KEY_ENTER))
+	case SceneName::GAMEMANAGER:
+		if (Pad::Get().isPushButton(2))
 		{
 			scene_num = gamemain.Shift();
 

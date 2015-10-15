@@ -1,7 +1,12 @@
 ﻿#include "lib/framework.hpp"
-#include "singleton/singleton.h"
+#include "singleton/appenv/sin_appenv.h"
+#include "singleton/gamepad/sin_gamepad.h"
 #include "scenemanager/scenemanager.h"
-#include "scene/scene.h"
+#include "scene/title/title.h"
+#include "scene/worldselect/worldselect.h"
+#include "scene/stageselect/stageselect.h"
+#include "scene/option/option.h"
+#include "scene\gamemanager\gamemanager.h"
 #include "chara/chara.h"
 #include "map/map.h"
 #include <iostream>
@@ -10,21 +15,21 @@
 int main()
 {
 
-	env;
+	App::Get();
 
 	SceneManager scenemanager;
 
-	while (env.isOpen())
+	while (App::Get().isOpen())
 	{
 		scenemanager.UpDate();
 
 		scenemanager.Shift();
 
-		env.begin();
+		App::Get().begin();
 
 		scenemanager.Draw();
 
-		env.end();
+		App::Get().end();
 
 	}
 }

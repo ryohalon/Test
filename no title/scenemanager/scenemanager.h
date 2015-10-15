@@ -1,5 +1,9 @@
 #pragma once
-#include "../scene/scene.h"
+#include "../singleton/gamepad/sin_gamepad.h"
+#include "../scene/title/title.h"
+#include "../scene/worldselect/worldselect.h"
+#include "../scene/stageselect/stageselect.h"
+#include "../scene/gamemanager/gamemanager.h"
 
 //****************************************************************
 //ÉVÅ[Éìä«óù
