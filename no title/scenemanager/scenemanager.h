@@ -1,13 +1,12 @@
 #pragma once
-#include "../singleton/gamepad/sin_gamepad.h"
+#include "../topheader/topheader.h"
+#include "../savedata/savedata.h"
 #include "../scene/title/title.h"
 #include "../scene/worldselect/worldselect.h"
 #include "../scene/stageselect/stageselect.h"
 #include "../scene/gamemanager/gamemanager.h"
 
-//****************************************************************
-//ÉVÅ[Éìä«óù
-//****************************************************************
+
 
 class SceneManager
 {
@@ -17,10 +16,16 @@ private:
 	WorldSelect worldselect;
 	StageSelect stageselect;
 	GameMain gamemain;
+	SaveData savedata;
 
-	SceneName scene_num = TITLE;
+	SceneName scene_num = SceneName::TITLE;
 
 public:
+
+	SceneManager();
+	~SceneManager();
+
+	void MainLoop();
 
 	void UpDate();
 	void Draw();

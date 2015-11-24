@@ -1,11 +1,7 @@
 #pragma once
-#include "../../singleton/appenv/sin_appenv.h"
-#include "../../singleton/gamepad/sin_gamepad.h"
+#include "../../topheader/topheader.h"
 
 
-
-//******************************************************************
-//ƒ^ƒCƒgƒ‹
 
 class Title
 {
@@ -21,6 +17,7 @@ private:
 	float alpha_count;
 
 	float ChangeAlpha();
+	void Alpha();
 
 public:
 

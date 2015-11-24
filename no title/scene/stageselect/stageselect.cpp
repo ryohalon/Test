@@ -1,48 +1,63 @@
 #include "stageselect.h"
 
 
-
-//***************************************************************
-//ステージセレクト
-
 //private
+
+//カーソルを移動させる関数
 void StageSelect::MoveCursol()
 {
-	//左移動
-	if (stage_num > -1 && stage_num < 9)
+	//右移動
+	if (stage_num > -1 && stage_num < 10)
 	{
 		if (Pad::Get().isPushButton(14))
 		{
-			if (stage_num != 4)
+			//クリアしていないと次のステージにカーソルが移動しない
+			if (stage_status[world_num][stage_num] == StageStatus::CLEAR)
 			{
-				cursol.pos.x() += 250;
-
-				stage_num++;
-			}
-			else
-			{
-				cursol.pos = Vec2i(-600, -300);
-
-				stage_num++;
+				if (stage_num == 9)
+				{
+					if (stage_status[world_num][9] != StageStatus::LOCKED)
+					{
+						cursol.pos = Vec2i(-600, -50);
+						stage_num = 0;
+					}
+				}
+				else if (stage_num == 4)
+				{
+					cursol.pos = Vec2i(-600, -300);
+					stage_num++;
+				}
+				else if (stage_num != 9)
+				{
+					cursol.pos.x() += 250;
+					stage_num++;
+				}
 			}
 		}
 	}
 
-	//右移動
-	if (stage_num > 0 && stage_num < 10)
+	//左移動
+	if (stage_num > -1 && stage_num < 10)
 	{
+
 		if (Pad::Get().isPushButton(16))
 		{
-			if (stage_num != 5)
+			if (stage_num == 5)
 			{
-				cursol.pos.x() -= 250;
-
+				cursol.pos = Vec2i(400, -50);
 				stage_num--;
+			}
+			else if (stage_num == 0)
+			{
+				if (stage_status[world_num][9] != StageStatus::LOCKED)
+				{
+					cursol.pos = Vec2i(400, -300);
+					stage_num = 9;
+				}
 			}
 			else
 			{
-				cursol.pos = Vec2i(400, -50);
-
+				cursol.pos.x() -= 250;
 				stage_num--;
 			}
 		}
@@ -53,9 +68,13 @@ void StageSelect::MoveCursol()
 	{
 		if (Pad::Get().isPushButton(15))
 		{
-			cursol.pos.y() -= 250;
+			//下のステージが開放されてなければカーソルが移動しない
+			if (stage_status[world_num][stage_num + 5] != StageStatus::LOCKED)
+			{
+				cursol.pos.y() -= 250;
 
-			stage_num += 5;
+				stage_num += 5;
+			}
 		}
 	}
 
@@ -71,45 +90,64 @@ void StageSelect::MoveCursol()
 	}
 }
 
-
 //public
 
 //コンストラクタ
-StageSelect::StageSelect()
+StageSelect::StageSelect() :
+world_image("res/image/world1.png"),
+world_num(0),
+stage_num(0)
 {
-	world_image = Texture("res/image/world1.png");
-
-	world_num = 0;
-	stage_num = 0;
-
 	for (int i = 0; i < 3; i++)
 	{
 		for (int k = 0; k < 10; k++)
 		{
-			stage_status[i][k] = StageStatus::UNCLEAR;
+			if (k != 0)
+				stage_status[i][k] = StageStatus::LOCKED;
+			else if (k == 0)
+				stage_status[i][k] = StageStatus::UNCLEAR;
 		}
 	}
-
-	stage.pos = Vec2i(-600, -50);
-	stage.size = 200;
-
-	cursol.pos = Vec2i(-600, -50);
-	cursol.size = 200;
 }
 
+//ワールド番号を受け取る関数
 void StageSelect::SetWorldNum(int num)
 {
 	world_num = num;
 }
 
-void StageSelect::StageClear(StageStatus status)
+//ステージをクリアしたかの情報を獲得する関数
+void StageSelect::IsStageClear(StageStatus status)
 {
-	stage_status[world_num][stage_num] = status;
+	//クリア済みの場合はいらない
+	if (stage_status[world_num][stage_num] == StageStatus::UNCLEAR)
+		stage_status[world_num][stage_num] = status;
+
+	//クリアした場合に次のステージを開放する
+	//ステージ10は次のステージがないので処理しない
+	if (status == StageStatus::CLEAR && stage_num != 9)
+	{
+		if (stage_status[world_num][stage_num + 1] == StageStatus::LOCKED)
+			UnlockedNextStage();
+	}
 }
 
+//次のステージを開放する関数
+void StageSelect::UnlockedNextStage()
+{
+	stage_status[world_num][stage_num + 1] = StageStatus::UNCLEAR;
+}
+
+//ステージ番号を渡す関数
 int StageSelect::GetStageNum()
 {
 	return stage_num;
+}
+
+//ステージのクリア情報を渡す関数
+StageStatus* StageSelect::GetStageStatus()
+{
+	return *stage_status;
 }
 
 StageStatus StageSelect::IsWorldClear()
@@ -119,6 +157,7 @@ StageStatus StageSelect::IsWorldClear()
 	else
 		return StageStatus::UNCLEAR;
 }
+//ステージ10をクリアしたかでワールドクリアを決めている
 
 void StageSelect::UpDate()
 {
@@ -139,11 +178,15 @@ void StageSelect::Draw()
 		switch (stage_status[world_num][k])
 		{
 		case StageStatus::UNCLEAR:
-			drawFillBox(stage.pos.x() + 250 * (k % 5), stage.pos.y() - 250 * (k / 5 % 10), stage.size, stage.size, Color::yellow);
+			drawFillBox(stage_icon.pos.x() + 250 * (k % 5), stage_icon.pos.y() - 250 * (k / 5 % 10), stage_icon.size, stage_icon.size, Color::yellow);
 			break;
 
 		case StageStatus::CLEAR:
-			drawFillBox(stage.pos.x() + 250 * (k % 5), stage.pos.y() - 250 * (k / 5 % 10), stage.size, stage.size, Color::cyan);
+			drawFillBox(stage_icon.pos.x() + 250 * (k % 5), stage_icon.pos.y() - 250 * (k / 5 % 10), stage_icon.size, stage_icon.size, Color::cyan);
+			break;
+
+		case StageStatus::LOCKED:
+			drawFillBox(stage_icon.pos.x() + 250 * (k % 5), stage_icon.pos.y() - 250 * (k / 5 % 10), stage_icon.size, stage_icon.size, Color::gray);
 			break;
 		}
 	}
@@ -152,12 +195,13 @@ void StageSelect::Draw()
 	drawBox(cursol.pos.x(), cursol.pos.y(), cursol.size, cursol.size, 10, Color::magenta);
 }
 
+//シーン切り替えの関数
 SceneName StageSelect::Shift()
 {
 	if (Pad::Get().isPushButton(1))
-		return WORLDSELECT;
+		return SceneName::WORLDSELECT;
 	if (Pad::Get().isPushButton(2))
-		return GAMEMANAGER;
+		return SceneName::GAMEMANAGER;
 
-	return WORLDSELECT;
+	return SceneName::WORLDSELECT;
 }

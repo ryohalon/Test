@@ -1,11 +1,11 @@
 #pragma once
-#include "../../singleton/appenv/sin_appenv.h"
-#include "../../singleton/gamepad/sin_gamepad.h"
+#include "../../topheader/topheader.h"
 
 
 
-//****************************************************************
+//***************************************
 //オプション（作れたら最後に作るかも）
+//***************************************
 
 class Option
 {

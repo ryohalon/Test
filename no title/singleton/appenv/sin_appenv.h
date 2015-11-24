@@ -12,32 +12,8 @@ public:
 
 	static AppEnv& Get()
 	{
-		static AppEnv env(WIN_WIDTH, WIN_HEIGHT, false, true);
+		static AppEnv env(WIN_WIDTH, WIN_HEIGHT);
 
 		return env;
 	}
 };
-
-
-
-enum SceneName
-{
-	TITLE,
-	WORLDSELECT,
-	STAGESELECT,
-	GAMEMANAGER,
-};
-
-enum StageStatus
-{
-	UNCLEAR,
-	CLEAR,
-};
-
-enum MapNum
-{
-	HEIGHTNUM = 32,
-	WIDTHNUM = 64
-};
-
-#define MAP_SIZE (64)

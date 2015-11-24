@@ -1,11 +1,9 @@
 #pragma once
-#include "../../singleton/appenv/sin_appenv.h"
-#include "../../singleton/gamepad/sin_gamepad.h"
+#include "../../topheader/topheader.h"
+#include "../../object/object.h"
 
-
-
-//******************************************************************
-//ワールドセレクト
+#define WORLD_START_POSITION Vec2i(-200, -280)
+#define WORLD_SIZE (400)
 
 class WorldSelect
 {
@@ -17,19 +15,10 @@ private:
 
 	StageStatus world_status[3];
 
-	struct World
-	{
-		Vec2i pos;
-		int size;
-	};
-	World world;
-
-	struct Cursol
-	{
-		Vec2i pos;
-		int size;
-	};
-	Cursol cursol;
+	//ワールドアイコン
+	Object world = Object(WORLD_START_POSITION, WORLD_SIZE);
+	//カーソル
+	Object cursol = Object(WORLD_START_POSITION, WORLD_SIZE);
 
 	void MoveCursol();
 
@@ -37,7 +26,8 @@ public:
 
 	WorldSelect();
 
-	void SetWorldClear(StageStatus);
+	void IsWorldClear(StageStatus);
+	void UnlockedNextWorld();
 	int GetWorldNum();
 
 	void UpDate();

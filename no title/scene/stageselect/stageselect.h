@@ -1,11 +1,9 @@
 #pragma once
-#include "../../singleton/appenv/sin_appenv.h"
-#include "../../singleton/gamepad/sin_gamepad.h"
+#include "../../topheader/topheader.h"
+#include "../../object/object.h"
 
-
-
-//****************************************************************
-//ステージセレクト
+#define STAGE_START_POSITION Vec2i(-600, -50)
+#define STAGE_SIZE (200)
 
 class StageSelect
 {
@@ -18,20 +16,9 @@ private:
 	StageStatus stage_status[3][10];
 
 	//マップアイコン
-	struct Stage
-	{
-		Vec2i pos;
-		int size;
-	};
-	Stage stage;
-
+	Object stage_icon = Object(STAGE_START_POSITION, STAGE_SIZE);
 	//カーソル
-	struct Cursol
-	{
-		Vec2i pos;
-		int size;
-	};
-	Cursol cursol;
+	Object cursol = Object(STAGE_START_POSITION, STAGE_SIZE);
 
 	void MoveCursol();
 
@@ -40,8 +27,10 @@ public:
 	StageSelect();
 
 	void SetWorldNum(int);
-	void StageClear(StageStatus);
+	void IsStageClear(StageStatus);
+	void UnlockedNextStage();
 	int GetStageNum();
+	StageStatus* GetStageStatus();
 	StageStatus IsWorldClear();
 
 	void UpDate();

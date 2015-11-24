@@ -1,5 +1,32 @@
 #include "scenemanager.h"
 
+SceneManager::SceneManager()
+{
+
+}
+
+SceneManager::~SceneManager()
+{
+	
+}
+
+void SceneManager::MainLoop()
+{
+	while (App::Get().isOpen())
+	{
+		UpDate();
+
+		Shift();
+
+		App::Get().begin();
+
+		Draw();
+
+		App::Get().end();
+
+	}
+}
+
 void SceneManager::UpDate()
 {
 	switch (scene_num)
@@ -8,7 +35,7 @@ void SceneManager::UpDate()
 		title.UpDate();
 		break;
 
-	case WORLDSELECT:
+	case SceneName::WORLDSELECT:
 		worldselect.UpDate();
 		break;
 
@@ -30,7 +57,7 @@ void SceneManager::Draw()
 		title.Draw();
 		break;
 
-	case WORLDSELECT:
+	case SceneName::WORLDSELECT:
 		worldselect.Draw();
 		break;
 
@@ -56,7 +83,7 @@ void SceneManager::Shift()
 			exit(0);
 		break;
 
-	case WORLDSELECT:
+	case SceneName::WORLDSELECT:
 		if (Pad::Get().isPushButton(2) || Pad::Get().isPushButton(1))
 		{
 			scene_num = worldselect.Shift();
@@ -74,16 +101,18 @@ void SceneManager::Shift()
 			gamemain.SetWorldNum(worldselect.GetWorldNum());
 			gamemain.SetStageNum(stageselect.GetStageNum());
 
-			worldselect.SetWorldClear(stageselect.IsWorldClear());
+			worldselect.IsWorldClear(stageselect.IsWorldClear());
 		}
 		break;
 
 	case SceneName::GAMEMANAGER:
-		if (Pad::Get().isPushButton(2))
+		if (Pad::Get().isPushButton(2)) /*|| Pad::Get().isPushButton(1))*/
 		{
 			scene_num = gamemain.Shift();
 
-			stageselect.StageClear(gamemain.GetStageStatus());
+			stageselect.IsStageClear(gamemain.GetStageStatus());
+
+			savedata.SaveStageData(worldselect.GetWorldNum(), stageselect.GetStageStatus());
 		}
 		break;
 	}

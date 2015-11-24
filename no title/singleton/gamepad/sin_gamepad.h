@@ -1,6 +1,6 @@
 #pragma once
-#include "../../lib/framework.hpp"
 #include "../appenv/sin_appenv.h"
+
 
 class Pad
 {

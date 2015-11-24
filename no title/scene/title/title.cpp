@@ -2,9 +2,6 @@
 
 
 
-//***************************************************************
-//タイトル
-
 //private
 
 //透明度の変更
@@ -15,21 +12,24 @@ float Title::ChangeAlpha()
 	return ((std::sin(alpha_count) + 1.0f) * 0.9f);
 }
 
+void Title::Alpha()
+{
+	alpha = ChangeAlpha();
+}
+
 //public
 
 //コンストラクタ
-Title::Title()
-{
-	title = Texture("res/image/title.png");
-	press_start = Texture("res/image/press_start.png");
-
-	alpha = 1.0f;
-	alpha_count = 0.0f;
-}
+Title::Title() :
+title("res/image/title.png"),
+press_start("res/image/press_start.png"),
+alpha(1.0f),
+alpha_count(0.0f)
+{}
 
 void Title::UpDate()
 {
-	alpha = ChangeAlpha();
+	Alpha();
 }
 
 void Title::Draw()
@@ -44,6 +44,7 @@ void Title::Draw()
 	drawTextureBox(-256, -200, 512, 128, 0, 0, 256, 64, press_start, Color(0, 0, 0, alpha));
 }
 
+//シーン切り替えの関数
 SceneName Title::Shift()
 {
 	return SceneName::WORLDSELECT;
